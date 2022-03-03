@@ -1,5 +1,108 @@
-body {
-  background-color: black;
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap");
+:root {
+  --primary-color: #02182B;
+  --primary-color-alt: #0197F6;
+}
+
+* {
+  font-family: "Outfit", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  font-size: 24px;
+  color: var(--primary-color);
+}
+
+.btn {
+  border-radius: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 18px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-width: 2px;
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  border-color: var(--primary-color);
+  border-width: 2px;
+  background-color: #ffffff;
+  color: var(--primary-color);
+}
+
+.btn-secondary {
+  background-color: #e5e5e5;
+  border: none;
+  color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+  background-color: #c4c4c4;
+  border: none;
+  color: var(--primary-color);
+}
+
+.btn-link {
+  color: var(--primary-color-alt);
+}
+
+input[type=email].form-control,
+input[type=password].form-control {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 2px solid #c4c4c4;
+}
+
+input[type=email].form-control:focus-within,
+input[type=password].form-control:focus-within {
+  box-shadow: none;
+  outline: none;
+}
+
+.input-group-prepend span.input-group-text {
+  font-size: 24px;
+  color: "#c4c4c4";
+  background-color: #ffffff !important;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 2px solid #c4c4c4;
+}
+
+.avatar {
+  width: 15%;
+  border-radius: 200px;
+}
+
+.shadow-sm {
+  box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn.rounded-btn {
+  background-color: var(--primary-color);
+  border-radius: 500px;
+  color: #ffffff;
+  padding-right: 27px;
+  padding-left: 27px;
+  padding-top: 21px;
+  padding-bottom: 21px;
+}
+
+.btn.rounded-btn:active,
+.btn.rounded-btn:hover {
+  background-color: #354655;
+  box-shadow: none;
+  outline: none;
+}
+
+.head-part {
+  padding-bottom: 0px !important;
 }
 
 /*# sourceMappingURL=style.css.map */
