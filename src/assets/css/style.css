@@ -2,12 +2,15 @@
 :root {
   --primary-color: #02182B;
   --primary-color-alt: #0197F6;
+  --danger-color: #D7263D;
+  --info-color: #448FA3;
 }
 
 * {
   font-family: "Outfit", sans-serif;
   margin: 0;
   padding: 0;
+  transition: all 200ms ease;
 }
 
 .header {
@@ -56,6 +59,7 @@ input[type=password].form-control {
   padding-top: 30px;
   padding-bottom: 30px;
   border: none;
+  color: var(--primary-color);
   border-radius: 0px;
   border-bottom: 2px solid #c4c4c4;
 }
@@ -64,6 +68,7 @@ input[type=email].form-control:focus-within,
 input[type=password].form-control:focus-within {
   box-shadow: none;
   outline: none;
+  border-bottom: 2px solid #02182B;
 }
 
 .input-group-prepend span.input-group-text {
@@ -103,6 +108,79 @@ input[type=password].form-control:focus-within {
 
 .head-part {
   padding-bottom: 0px !important;
+}
+
+.tab-btn {
+  border-radius: 0px;
+  color: #555;
+}
+
+.tab-btn.hover,
+.tab-btn.active {
+  color: var(--primary-color);
+  font-weight: 500;
+  border-radius: 0px;
+}
+
+.tab-btn:focus {
+  box-shadow: none;
+}
+
+.tab-btn.active {
+  border-bottom: 2px solid var(--danger-color);
+}
+
+.task-card {
+  background-color: #E6E8EA;
+  border-radius: 10px;
+}
+
+.task-title {
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+.task-desc {
+  color: #8A8B8C;
+  font-size: 10px;
+}
+
+.info-color {
+  color: var(--info-color) !important;
+}
+
+.main-content {
+  height: 70vh;
+  overflow-x: scroll;
+}
+
+.btn-opt {
+  border: 2px solid #448FA3;
+  padding: 0px 9px;
+  border-radius: 20px;
+}
+
+.btn-opt:hover {
+  background-color: #448FA3;
+}
+.btn-opt:hover svg {
+  font-size: 8px;
+}
+.btn-opt:hover svg path {
+  fill: #ffffff !important;
+}
+
+.btn.btn-close {
+  padding: 6px 15px;
+  margin: 0px;
+  border: none;
+  color: #D7263D;
+  border-radius: 20px;
+  background-color: #f5f5f5;
+}
+
+.btn-close:hover {
+  background-color: #f5f5f5;
 }
 
 /*# sourceMappingURL=style.css.map */
