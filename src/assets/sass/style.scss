@@ -12,6 +12,7 @@
     font-family: 'Outfit', sans-serif;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
     transition: all 200ms ease;
 }
 
@@ -57,21 +58,23 @@
 }
 
 input[type="email"].form-control,
+input[type="text"].form-control,
 input[type="password"].form-control{
     padding-top: 30px;
     padding-bottom: 30px;
     border: none;
     color: var(--primary-color);
     border-radius: 0px;
-    border-bottom: 2px solid #c4c4c4;
+    border-bottom: 2px solid #dfdfdf;
 }
 
 input[type="email"].form-control:focus-within,
+input[type="text"].form-control:focus-within,
 input[type="password"].form-control:focus-within
 {
     box-shadow: none;
     outline: none;
-    border-bottom: 2px solid #02182B;
+    border-bottom: 2px solid #02182B !important;
     
 }
 
@@ -83,7 +86,7 @@ input[type="password"].form-control:focus-within
         background-color : #ffffff !important;
         border : none;
         border-radius: 0px;
-        border-bottom: 2px solid #c4c4c4;
+        border-bottom: 2px solid #dfdfdf;
     }
 }
 
@@ -118,6 +121,7 @@ input[type="password"].form-control:focus-within
 .tab-btn{
     border-radius: 0px;
     color: #555;
+    padding-bottom: 5px;
 }
 .tab-btn.hover,
 .tab-btn.active{
@@ -139,6 +143,7 @@ input[type="password"].form-control:focus-within
 .task-title{
     color: var(--primary-color);
     font-size: 16px;
+    overflow-y: hidden;
 }
 
 .task-desc{
@@ -175,14 +180,44 @@ input[type="password"].form-control:focus-within
 }
 
 .btn.btn-close {
-    padding: 6px 15px;
+    padding: 8px 13px;
+    padding-bottom: 12px;
     margin: 0px;
     border: none;
     color: #D7263D;
-    border-radius: 20px;
+    border-radius: 100px;
     background-color: #f5f5f5;
 }
 
 .btn-close:hover{
     background-color: #f5f5f5;
 }
+
+.modal-content{
+    height: 100vh;
+    border-radius: 0px;
+}
+
+.modal-dialog {
+    margin: 0px;
+    
+}
+
+.modal-open .modal{
+    overflow-y: hidden;
+}
+
+.modal-header{
+    border-bottom: none;
+    border-radius: 0px !important;
+}
+
+input[type="date"].form-control,
+input[type="time"].form-control {
+    height: 50px;
+    border-width: 2px;
+}
+
+// input[type="time"].form-control::after{
+//     content : 'Time'
+// }

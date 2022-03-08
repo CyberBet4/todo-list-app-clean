@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faClose } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faClose, faSpaghettiMonsterFlying } from '@fortawesome/free-solid-svg-icons'
 
 const AddTaskModal = ({ active }) => {
 
     // const [show, setShow] = useState(false)
     const [ activeDisplay, setactiveDisplay ] = useState(true)
-    
-    console.log(active)
+    const [ title, setTitle ] = useState('')
+    const [ description, setDescription ] = useState('')
+    const [ time, setTime ] = useState('')
+    const [ date, setDate ] = useState('')
+
+    var data = ''
 
     const setActive = () =>{
 
@@ -19,9 +23,22 @@ const AddTaskModal = ({ active }) => {
             active = true
         }
 
-        
     }
-    console.log(active)
+
+    const getthisTask = () => {
+        
+        // data = {
+        //     title : title,
+        //     desc : description,
+        //     time : time,
+        //     date : date
+        // }
+
+        console.log(title);
+    }
+
+    console.log(title)
+
   return (
     <div>
         <Modal
@@ -52,7 +69,7 @@ const AddTaskModal = ({ active }) => {
                 </span>
                 
             </div>
-            <input type="email" class="form-control" placeholder="“Walk the dog”" aria-label="Username" aria-describedby="basic-addon1" />
+            <input type="text" class="form-control" onChange={(e) => setTitle(e.current.value)} placeholder="“Walk the dog”" />
         </div>
 
         <div class="input-group mb-3">
@@ -62,7 +79,7 @@ const AddTaskModal = ({ active }) => {
                 </span>
                 
             </div>
-            <input type="email" class="form-control" placeholder="Description" aria-label="Username" aria-describedby="basic-addon1" />
+            <input type="text" class="form-control" onChange={(e) => setDescription(e.current.value)} placeholder="Description"  />
         </div>
 
         <div className="d-flex" style={{justifyContent : 'space-between'}}>
@@ -73,7 +90,7 @@ const AddTaskModal = ({ active }) => {
                     </span>
                     
                 </div>
-                <input type="time" name="" id="" />
+                <input type="time" name="" onChange={(e) => setTime(e.current.value)} />
             </div>
 
             <div class="input-group w-40 mb-3">
@@ -83,11 +100,11 @@ const AddTaskModal = ({ active }) => {
                     </span>
                     
                 </div>
-                <input type="date" name="" id="" />
+                <input type="date" name="" onChange={(e) => setDate(e.current.value)} />
             </div>
         </div>
         <div className="d-flex justify-content-center">
-                <button className="btn btn-primary w-100">
+                <button onClick={getthisTask()} className="btn btn-primary w-100">
                     Add Task
                 </button>
             </div>
