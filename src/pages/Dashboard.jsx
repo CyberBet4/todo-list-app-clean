@@ -8,17 +8,24 @@ import Modal from 'react-bootstrap/Modal'
 import edit2 from '../assets/svgs/edit-2.svg'
 import desc from '../assets/svgs/menu.svg'
 import Spinner from 'react-bootstrap/Spinner'
+import Toast from 'react-bootstrap/Toast'
 import emtpyTasklist from '../assets/svgs/tasklist.svg'
+import { getAuth, signOut } from 'firebase/auth'
+import { useAuthState } from 'react-firebase-hooks/auth'
+
+
 // import AddTaskModal from '../components/AddTaskModal'
 
 const Dashboard = () => {
 
+    const [ show, setShow ] = useState(false)
     const [ screen, setScreen ] = useState(0)
     const [ active, setActive ] = useState(false)
     const [ title, setTitle ] = useState('')
     const [ description, setDescription ] = useState('')
     const [ time, setTime ] = useState('')
     const [ date, setDate ] = useState('')
+    const [ loader, setLoader ] = useState('')
     var data = ''
     let pendingClass = ''
     let completedClass = ''
@@ -33,19 +40,36 @@ const Dashboard = () => {
             date : date
         }
 
+        setLoader(
+            <Spinner animation="border" size="sm" className='mr-3' variant="light" />
+        ) 
         // timer is prone to change... bcuz we'd need to wait for 
         //response from firebase b4 we close the modal
         setTimeout(() => {
             setActive(false)    
-        }, 500);
+            setLoader('')
+            setShow(true)
+        }, 2500);
         
         console.log(data);
     }
 
+    const auth = getAuth()
+    const signoutUser = async () =>{
+        
+        try{
+            await signOut(auth)
+        }catch(e){
+            console.log(e)
+        }
+    }
+    
+
+    const [user] = useAuthState(auth)
+
     const showModal = () =>{
         return(
-            <Modal
-        // show={active}
+            <Modal        
         show={active}
         onHide={() => setActive()}
         dialogClassName="modal-90w"
@@ -98,12 +122,31 @@ const Dashboard = () => {
         </div>
         <div className="d-flex justify-content-center">
                 <button className="btn btn-primary w-100" onClick={thisTask} >
-                <Spinner animation="border" size="sm" className='mr-3' variant="light" />
+                {loader}
                     Add Task
                 </button>
             </div>
         </Modal.Body>
       </Modal>
+        )
+    }
+
+    const showToast = () => {
+        return(
+            <Toast onClose={() => setShow(false)} show={show} 
+                delay={3000} autohide animation={true}
+            >
+          <Toast.Header>
+            <img
+              src="holder.js/20x20?text=%20"
+              className="rounded mr-2"
+              alt=""
+            />
+            <strong className="mr-auto">New Task Added</strong>
+            <small>11 mins ago</small>
+          </Toast.Header>
+          <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+        </Toast>
         )
     }
 
@@ -146,18 +189,23 @@ const Dashboard = () => {
   return (
     <div className=''>
         {showModal()}
+        <div className="">
+            {showToast()}
+        </div>
+        
         {/* <AddTaskModal active={active} /> */}
         <div className="head-part p-2 pb-0 shadow-sm">
             <div className="d-flex mt-2 w-100" style={{justifyContent : 'space-between', alignItems : 'center'}}>
                 <div>
                     {/* motivation text */}
-                    <h3 className="header" style={{fontSize : 18, overflowY : 'hidden'}}>
-                        Welcome back, Lad!
+                    <h3 className="header" style={{fontSize : 18, overflowY : 'hidden', maxWidth : 200}}>
+                        Welcome back, {user.displayName}!
                         {/* To Do List App */}
                     </h3>
                 </div>
                     {/* image goes here */}
-                    <img src={avatar1} className='img-fluid avatar' alt="" />
+                    <button className="btn btn-default" onClick={signoutUser} >Sign Out</button>  
+                    <img src={user.photoURL} className='img-fluid avatar' alt="" />
             </div>
 
             <div className='d-flex p-0 justify-content-start'>

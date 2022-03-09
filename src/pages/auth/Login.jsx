@@ -1,9 +1,36 @@
-import React from 'react'
-// import '../assets/css/style.css'
+import React, { useState } from 'react'
+import firebase from 'firebase/compat/app'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import lockIcon from '../../assets/svgs/lock.svg'
 import atIcon from '../../assets/svgs/at.svg'
 import authImg from '../../assets/svgs/authentication.svg'
+import { firebaseConfig } from '../../Firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { Spinner } from 'react-bootstrap'
+import googleIcon from '../../assets/svgs/google.svg'
 const Login = () => {
+
+    const [loginError, setloginError] = useState()
+
+    // initialize firebase app
+    let provider = new GoogleAuthProvider()
+    firebase.initializeApp(firebaseConfig)
+
+    const auth = getAuth()
+
+    // login user using google sign in popup
+    const loginUser = async () => {
+        try{
+            await signInWithPopup(auth, provider)
+        }catch(e) {
+            setloginError(e.message)
+        }
+        
+    }
+
+    // get error state
+    const [error] = useAuthState(auth)
+
   return (
     <div className='container'>
         <div className="d-flex mt-4 justify-content-center">
@@ -13,6 +40,20 @@ const Login = () => {
             <h3 className="mt-4 header">Login to access your tasks</h3>
         </div>
         <div className='mt-4'>
+            {/* Print Login errors */}
+            {loginError ?
+                (
+                    <div className="alert alert-danger">
+                        {loginError}
+                    </div>
+                ):
+                error ? (
+                    <div className="alert alert-danger">
+                        {error}
+                    </div>
+                )
+                :<></>
+            }
             
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -40,7 +81,8 @@ const Login = () => {
                 </button>
             </div>
             <div className="d-flex mt-3 justify-content-center">
-                <button className="btn btn-secondary w-100">
+                <button onClick={loginUser} className="btn btn-secondary w-100">
+                    <img src={googleIcon} width="24px" className='img-fluid mr-3' alt="" />
                     Login with Google
                 </button>
             </div>
@@ -49,6 +91,7 @@ const Login = () => {
                     Create an Account
                 </button>
             </div>
+            
         </div>
         
     </div>

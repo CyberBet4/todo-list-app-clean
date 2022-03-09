@@ -28,15 +28,16 @@
 
 .btn-primary {
   background-color: var(--primary-color);
-  border-width: 2px;
-  border-color: var(--primary-color);
+  border: none;
 }
 
-.btn-primary:hover {
-  border-color: var(--primary-color);
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus-within {
+  border-color: none;
   border-width: 2px;
-  background-color: #ffffff;
-  color: var(--primary-color);
+  background-color: #354655;
+  color: #ffffff;
 }
 
 .btn-secondary {
@@ -211,6 +212,16 @@ input[type=date].form-control,
 input[type=time].form-control {
   height: 50px;
   border-width: 2px;
+}
+
+.fade.toast.show {
+  position: absolute;
+  margin-top: 10px;
+  margin-left: 5%;
+}
+
+.toast {
+  background-color: #ffffff;
 }
 
 /*# sourceMappingURL=style.css.map */
