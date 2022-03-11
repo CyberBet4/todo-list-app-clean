@@ -18,6 +18,13 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollection } from 'react-firebase-hooks/firestore'
 import { getFirestore, collection, doc, addDoc, getDocs, setDoc } from 'firebase/firestore'
 
+
+// initialize cloud firestore
+export const db = getFirestore()
+
+export const auth = getAuth()
+ 
+
 const Dashboard = () => {
 
     const [ show, setShow ] = useState(false)
@@ -38,7 +45,9 @@ const Dashboard = () => {
     let completedClass = ''
     
     
-    const auth = getAuth()
+        
+    // get user auth state
+    const [user] = useAuthState(auth)
 
     // sign out user
     const signoutUser = async () =>{
@@ -49,11 +58,6 @@ const Dashboard = () => {
         }
     }
     
-    // get user auth state
-    const [user] = useAuthState(auth)
-
-    // initialize cloud firestore
-    const db = getFirestore()
 
     // get all data from the database using firebase react hooks
     const [ value, loading, error ] = useCollection(collection(db, "users", user.uid, "tasklist"))
@@ -68,7 +72,7 @@ const Dashboard = () => {
             
             setcompletedList(value.docs.filter(doc => doc.data().completed)) //filter to completed list
             setpendingList(value.docs.filter(doc => !doc.data().completed)) //filter to pending list 
-
+            
         }catch(e){
             console.log(e.message)
         }
@@ -78,7 +82,7 @@ const Dashboard = () => {
 
     
     // get task input
-    const thisTask = async () => {
+    const addTask = async () => {
         
         data = {
             id : uuidv4(),
@@ -163,7 +167,7 @@ const Dashboard = () => {
             </div>
         </div>
         <div className="d-flex justify-content-center">
-                <button className="btn btn-primary w-100" onClick={thisTask} >
+                <button className="btn btn-primary w-100" onClick={addTask} >
                 {loader}
                     Add Task
                 </button>
@@ -207,7 +211,7 @@ const Dashboard = () => {
                     // checks for empty list
                     pendingList ?
                     pendingList.map(doc => {
-                        return <Card key={doc.data().id} datas={doc.data()} />
+                        return <Card key={doc.id} docId={doc.id} datas={doc.data()} />
                     }) :
                     (
                         // Empty Pending Screen 
@@ -232,7 +236,7 @@ const Dashboard = () => {
                     // checks for empty list
                     completedList ?
                     completedList.map(doc => {
-                        return <Card key={doc.data().id} datas={doc.data()} />
+                        return <Card key={doc.id} docId={doc.id} datas={doc.data()} />
                     }) :
                     (
                         // Empty Completed Screen 

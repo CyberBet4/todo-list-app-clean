@@ -2,9 +2,37 @@ import React from 'react'
 import editIcon from '../assets/svgs/edit.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendar, faClock, faCheck, faClose } from '@fortawesome/free-solid-svg-icons'
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { db, auth } from '../pages/Dashboard';
+import { useAuthState } from 'react-firebase-hooks/auth'
 
-const Card = ({ datas }) => {
-    // console.log(datas)
+const Card = ({ datas, docId }) => {
+
+    const [user] = useAuthState(auth)
+    
+    // delete current task
+    const deleteTask = async () =>{
+        try{
+            await deleteDoc(doc(db, "users", user.uid, "tasklist", docId))
+            console.log('Task Deleted!')
+        }catch(e){
+            console.log(e.message)
+        }
+        
+    }
+
+    // update current task
+    const updateTask = async () =>{
+        try{
+            await updateDoc(doc(db, "users", user.uid, "tasklist", docId), {
+                completed : true
+            })
+            console.log('Task Completed!')
+        }catch(e){
+            console.log(e.message)
+        }
+    }
+    
   return (
     <div>
         <div className='task-card p-4 mb-4'>
@@ -42,10 +70,10 @@ const Card = ({ datas }) => {
 
                     <div className="d-flex justify-content-center mt-5">
                         <button className='btn btn-opt  mr-3'>
-                            <FontAwesomeIcon className='info-color' style={{fontSize : 12, color : '#0197F6'}} icon={faClose} />
+                            <FontAwesomeIcon className='info-color' onClick={deleteTask} style={{fontSize : 12, color : '#0197F6'}} icon={faClose} />
                         </button>
                         <button className='btn btn-opt '>
-                            <FontAwesomeIcon className='info-color' style={{fontSize : 12, color : '#0197F6'}} icon={faCheck} />
+                            <FontAwesomeIcon className='info-color' onClick={updateTask} style={{fontSize : 12, color : '#0197F6'}} icon={faCheck} />
                     </button>
                     </div>
                     
