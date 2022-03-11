@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import avatar1 from '../assets/img/avatar1.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faClose } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faClose, faCircle } from '@fortawesome/free-solid-svg-icons'
 import Close from '../assets/svgs/x.svg'
 import Card from '../components/Card'
 import Modal from 'react-bootstrap/Modal'
@@ -40,7 +40,7 @@ const Dashboard = () => {
     const [ loadingLoad, setloadingLoad ] = useState(false)
     const [ errorMsg, seterrorMsg ] = useState('')
     
-    var data = ''
+    // var data = ''
     let pendingClass = ''
     let completedClass = ''
     
@@ -83,17 +83,16 @@ const Dashboard = () => {
     
     // get task input
     const addTask = async () => {
-        
-        data = {
-            id : uuidv4(),
-            completed : false,
-            date : date,
-            desc : description,
-            time : time,
-            title : title
-        }
 
         try{
+            let data = {
+                id : uuidv4(),
+                completed : false,
+                date : date,
+                description : description,
+                time : time,
+                title : title
+            }
             setLoader(<Spinner animation="border" size="sm" className='mr-3' variant="light" />) 
 
             const docRef = await addDoc(collection(db, "users", user.uid, "tasklist"), data)
@@ -102,12 +101,11 @@ const Dashboard = () => {
             setActive(false)    
             setLoader('')
             setShow(true)
-            console.log('adding was a success');
+            console.log('Task added');
         }catch(e) {
-            console.log(e)
+            console.log(e.message)
         }
         
-        console.log(data);
     }
 
     
@@ -177,21 +175,24 @@ const Dashboard = () => {
         )
     }
 
-    const showToast = () => {
+    const showToast = ( title ) => {
         return(
             <Toast onClose={() => setShow(false)} show={show} 
-                delay={3000} autohide animation={true}
+                delay={3000} animation={true}
+                // autohide
             >
           <Toast.Header>
-            <img
-              src="holder.js/20x20?text=%20"
-              className="rounded mr-2"
-              alt=""
-            />
+            
+            <FontAwesomeIcon icon={faCircle} className='mr-2' style={{color : '#008148'}} />
             <strong className="mr-auto">New Task Added</strong>
             <small>11 mins ago</small>
           </Toast.Header>
-          <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+          <Toast.Body style={{paddingBottom : 0}}>{title}
+              <br />
+              <button className="btn btn-default w-100" style={{padding : 6, fontSize : 14, marginTop : 12, color : '#0197F6'}} >
+                <FontAwesomeIcon icon={faClose} className='mr-1' onClick={() => setShow(false)} /> Close</button>
+          </Toast.Body>
+           
         </Toast>
         )
     }
@@ -269,7 +270,7 @@ const Dashboard = () => {
     <div className=''>
         {showModal()}
         <div className="">
-            {showToast()}
+            {showToast(title)}
         </div>
         
         {/* <AddTaskModal active={active} /> */}

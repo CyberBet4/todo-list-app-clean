@@ -19,7 +19,7 @@ const Login = () => {
     const auth = getAuth()
 
     // login user using google sign in popup
-    const loginUser = async () => {
+    const loginUserWithGoogle = async () => {
         try{
             await signInWithPopup(auth, provider)
         }catch(e) {
@@ -81,7 +81,7 @@ const Login = () => {
                 </button>
             </div>
             <div className="d-flex mt-3 justify-content-center">
-                <button onClick={loginUser} className="btn btn-secondary w-100">
+                <button onClick={loginUserWithGoogle} className="btn btn-secondary w-100">
                     <img src={googleIcon} width="24px" className='img-fluid mr-3' alt="" />
                     Login with Google
                 </button>

@@ -218,10 +218,20 @@ input[type=time].form-control {
   position: absolute;
   margin-top: 10px;
   margin-left: 5%;
+  border: none;
+  padding: 15px;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0px 2px 50px rgba(0, 0, 0, 0.1);
 }
 
 .toast {
   background-color: #ffffff;
+}
+
+.toast-header {
+  border: none;
+  padding: 0px;
 }
 
 /*# sourceMappingURL=style.css.map */
