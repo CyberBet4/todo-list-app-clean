@@ -1,21 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './assets/css/style.css'
 import Login from './pages/auth/Login'
 import Dashboard from './pages/Dashboard'
-import firebase from 'firebase/compat/app'
 import { Spinner } from 'react-bootstrap'
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { getAuth } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 // import { GoogleAuthProvider } from 'firebase/compat/app'
 
 function App() {
 
-  // firebase.initializeApp(firebaseConfig)
   const auth = getAuth()
 
   const [user, loading] = useAuthState(auth)
-  console.log(user)
+  // console.log(user)
   
   return (
     <div className="App" style={{maxWidth : 414}}>

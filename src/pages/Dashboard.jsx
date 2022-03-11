@@ -9,12 +9,14 @@ import edit2 from '../assets/svgs/edit-2.svg'
 import desc from '../assets/svgs/menu.svg'
 import Spinner from 'react-bootstrap/Spinner'
 import Toast from 'react-bootstrap/Toast'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+import { v4 as uuidv4 } from 'uuid';
 import emtpyTasklist from '../assets/svgs/tasklist.svg'
 import { getAuth, signOut } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
-
-
-// import AddTaskModal from '../components/AddTaskModal'
+import { useCollection } from 'react-firebase-hooks/firestore'
+import { getFirestore, collection, doc, addDoc, getDocs, setDoc } from 'firebase/firestore'
 
 const Dashboard = () => {
 
@@ -25,38 +27,21 @@ const Dashboard = () => {
     const [ description, setDescription ] = useState('')
     const [ time, setTime ] = useState('')
     const [ date, setDate ] = useState('')
+    const [ pendingList, setpendingList ] = useState([])
+    const [ completedList, setcompletedList ] = useState([])
     const [ loader, setLoader ] = useState('')
+    const [ loadingLoad, setloadingLoad ] = useState(false)
+    const [ errorMsg, seterrorMsg ] = useState('')
+    
     var data = ''
     let pendingClass = ''
     let completedClass = ''
     
-
-    const thisTask = () => {
-        
-        data = {
-            title : title,
-            desc : description,
-            time : time,
-            date : date
-        }
-
-        setLoader(
-            <Spinner animation="border" size="sm" className='mr-3' variant="light" />
-        ) 
-        // timer is prone to change... bcuz we'd need to wait for 
-        //response from firebase b4 we close the modal
-        setTimeout(() => {
-            setActive(false)    
-            setLoader('')
-            setShow(true)
-        }, 2500);
-        
-        console.log(data);
-    }
-
+    
     const auth = getAuth()
+
+    // sign out user
     const signoutUser = async () =>{
-        
         try{
             await signOut(auth)
         }catch(e){
@@ -64,9 +49,66 @@ const Dashboard = () => {
         }
     }
     
-
+    // get user auth state
     const [user] = useAuthState(auth)
 
+    // initialize cloud firestore
+    const db = getFirestore()
+
+    // get all data from the database using firebase react hooks
+    const [ value, loading, error ] = useCollection(collection(db, "users", user.uid, "tasklist"))
+
+    useEffect(()=>{
+        
+        try{
+            
+            loading ? setloadingLoad(loading) : setloadingLoad(loading)
+
+            error ? seterrorMsg(error) : seterrorMsg(null) // check for error message
+            
+            setcompletedList(value.docs.filter(doc => doc.data().completed)) //filter to completed list
+            setpendingList(value.docs.filter(doc => !doc.data().completed)) //filter to pending list 
+
+        }catch(e){
+            console.log(e.message)
+        }
+
+    }, [value, error, loading])
+    
+
+    
+    // get task input
+    const thisTask = async () => {
+        
+        data = {
+            id : uuidv4(),
+            completed : false,
+            date : date,
+            desc : description,
+            time : time,
+            title : title
+        }
+
+        try{
+            setLoader(<Spinner animation="border" size="sm" className='mr-3' variant="light" />) 
+
+            const docRef = await addDoc(collection(db, "users", user.uid, "tasklist"), data)
+           
+            console.log(docRef.id)
+            setActive(false)    
+            setLoader('')
+            setShow(true)
+            console.log('adding was a success');
+        }catch(e) {
+            console.log(e)
+        }
+        
+        console.log(data);
+    }
+
+    
+
+    // Display Modal
     const showModal = () =>{
         return(
             <Modal        
@@ -89,33 +131,33 @@ const Dashboard = () => {
             Get Something Done Today!
         </h3>
 
-        <div class="input-group mb-4">
-            <div class="input-group-prepend">
-                <span class="input-group-text modal-form" id="basic-addon1">
+        <div className="input-group mb-4">
+            <div className="input-group-prepend">
+                <span className="input-group-text modal-form" id="basic-addon1">
                 <img src={edit2} width={20} className='img-fluid' alt="" />
                 </span>
                 
             </div>
-            <input type="text" class="form-control" onChange={(e) => setTitle(e.target.value)}  placeholder="“Walk the dog”"  />
+            <input type="text" className="form-control" onChange={(e) => setTitle(e.target.value)}  placeholder="“Walk the dog”"  />
         </div>
 
-        <div class="input-group mb-4">
-            <div class="input-group-prepend modal-form">
-                <span class="input-group-text " id="basic-addon1">
+        <div className="input-group mb-4">
+            <div className="input-group-prepend modal-form">
+                <span className="input-group-text " id="basic-addon1">
                 <img src={desc} width={20} className='img-fluid' alt="" />
                 </span>
                 
             </div>
-            <input type="text" class="form-control"  onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
+            <input type="text" className="form-control"  onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
         </div>
 
         <div className="d-flex mb-5" style={{justifyContent : 'space-between'}}>
-            <div class="input-group mb-3 mr-2 w-40">
+            <div className="input-group mb-3 mr-2 w-40">
                 
                 <input type="time" className='form-control' onChange={(e) => setTime(e.target.value)} name="" id="" />
             </div>
 
-            <div class="input-group w-40 mb-3">
+            <div className="input-group w-40 mb-3">
                 
                 <input type="date" className='form-control ml-2' onChange={(e) => setDate(e.target.value)} name="" id="" />
             </div>
@@ -151,42 +193,75 @@ const Dashboard = () => {
     }
 
     const showContent = () => {
+
         if(screen === 0) {
-            // setpendingClass("btn btn-default tab-btn active mr-4")
             return (
+                
                 <div className="main-content p-3" >
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    
+                    {/* checks error message */}
+                    {errorMsg ? <div className='alert alert-danger'>{errorMsg}</div> :
+
+                    // checks loading state
+                    loadingLoad ? <div><Skeleton height={140} count={2} /> </div> : 
+
+                    // checks for empty list
+                    pendingList ?
+                    pendingList.map(doc => {
+                        return <Card key={doc.data().id} datas={doc.data()} />
+                    }) :
+                    (
+                        // Empty Pending Screen 
+                        <div className="d-flex mt-5 justify-content-center">
+                            <img src={emtpyTasklist} alt="" className="img-fluid" />
+                            <h6 style={{color : '#808080', textAlign : 'center'}}>Your task willl appear here when they are ticked complete</h6>
+                        </div>
+                    )
+                    }
                 </div>
             )
         }else if(screen === 1){
             return(
                 <div className="main-content p-3">
-                    {/* Empty Completed Screen */}
-                    <div className="d-flex mt-5 justify-content-center">
-                        <img src={emtpyTasklist} alt="" className="img-fluid" />
-                    </div>                            
                     
-                    <h6 style={{color : '#808080', textAlign : 'center'}}>Your task willl appear here when they are ticked complete</h6>
+                    {/* checks error message */}
+                    {errorMsg ? <div className='alert alert-danger'>{errorMsg}</div> :
+
+                    // checks loading state
+                    loadingLoad ? <div><Skeleton height={140} count={2} /> </div> : 
+
+                    // checks for empty list
+                    completedList ?
+                    completedList.map(doc => {
+                        return <Card key={doc.data().id} datas={doc.data()} />
+                    }) :
+                    (
+                        // Empty Completed Screen 
+                        <div className="d-flex mt-5 justify-content-center">
+                            <img src={emtpyTasklist} alt="" className="img-fluid" />
+                            <h6 style={{color : '#808080', textAlign : 'center'}}>Your task willl appear here when they are ticked complete</h6>
+                        </div>
+                    )
+                    }
+                                                
                 </div>
             )
         }
     }
 
 
-        if (screen === 0) {
-            pendingClass = 'btn btn-default tab-btn active mr-4';
-            completedClass = "btn btn-default tab-btn"
-        }else{
-            pendingClass = 'btn btn-default tab-btn mr-4'
-            completedClass = "btn btn-default active tab-btn"
-        }
+    if (screen === 0) {
+        pendingClass = 'btn btn-default tab-btn active mr-4';
+        completedClass = "btn btn-default tab-btn"
+    }else{
+        pendingClass = 'btn btn-default tab-btn mr-4'
+        completedClass = "btn btn-default active tab-btn"
+    }
+
+
+
 
   return (
+      
     <div className=''>
         {showModal()}
         <div className="">

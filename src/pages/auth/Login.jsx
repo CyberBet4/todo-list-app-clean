@@ -55,24 +55,24 @@ const Login = () => {
                 :<></>
             }
             
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">
+        <div className="input-group mb-3">
+            <div className="input-group-prepend">
+                <span className="input-group-text" id="basic-addon1">
                 <img src={atIcon} width={24} className='img-fluid' alt="" />
                 </span>
                 
             </div>
-            <input type="email" class="form-control" placeholder="e.g. “johndoe.com" aria-label="Username" aria-describedby="basic-addon1" />
+            <input type="email" className="form-control" placeholder="e.g. “johndoe.com" aria-label="Username" aria-describedby="basic-addon1" />
         </div>
 
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">
+        <div className="input-group mb-3">
+            <div className="input-group-prepend">
+                <span className="input-group-text" id="basic-addon1">
                 <img src={lockIcon} width={24} className='img-fluid' alt="" />
                 </span>
                 
             </div>
-            <input type="password" class="form-control" placeholder="**********" aria-label="Username" aria-describedby="basic-addon1" autoComplete={false} />
+            <input type="password" className="form-control" placeholder="**********" aria-label="Username" aria-describedby="basic-addon1" autoComplete={false} />
         </div>
 
             <div className="d-flex justify-content-center">
