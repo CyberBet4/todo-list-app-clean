@@ -1,8 +1,6 @@
 # Todo List App 
 <footer>Built by Triumph</footer> 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ## Features
 
 - Login with your Google account
