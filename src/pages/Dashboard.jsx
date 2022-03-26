@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import avatar1 from '../assets/img/avatar1.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faClose, faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faClose } from '@fortawesome/free-solid-svg-icons'
 import Close from '../assets/svgs/x.svg'
 import Card from '../components/Card'
 import Modal from 'react-bootstrap/Modal'
 import edit2 from '../assets/svgs/edit-2.svg'
 import desc from '../assets/svgs/menu.svg'
 import Spinner from 'react-bootstrap/Spinner'
-import Toast from 'react-bootstrap/Toast'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { v4 as uuidv4 } from 'uuid';
 import emtpyTasklist from '../assets/svgs/tasklist.svg'
+import Toaster from '../components/Toaster'
 import { getAuth, signOut } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollection } from 'react-firebase-hooks/firestore'
-import { getFirestore, collection, doc, addDoc, getDocs, setDoc } from 'firebase/firestore'
+import { getFirestore, collection, addDoc, updateDoc, doc } from 'firebase/firestore'
 
 
 // initialize cloud firestore
@@ -27,18 +27,22 @@ export const auth = getAuth()
 
 const Dashboard = () => {
 
-    const [ show, setShow ] = useState(false)
+    const [ show, setShow ] = useState(false) //...
     const [ screen, setScreen ] = useState(0)
+    const [ status, setStatus ] = useState('')
     const [ active, setActive ] = useState(false)
     const [ title, setTitle ] = useState('')
     const [ description, setDescription ] = useState('')
     const [ time, setTime ] = useState('')
     const [ date, setDate ] = useState('')
+    const [ toastDisplay, settoastDisplay ] = useState('')
     const [ pendingList, setpendingList ] = useState([])
     const [ completedList, setcompletedList ] = useState([])
     const [ loader, setLoader ] = useState('')
     const [ loadingLoad, setloadingLoad ] = useState(false)
     const [ errorMsg, seterrorMsg ] = useState('')
+    const [taskId, settaskId] = useState('')
+    const [buttonText, setbuttonText] = useState('Add Task')
     
     // var data = ''
     let pendingClass = ''
@@ -64,22 +68,45 @@ const Dashboard = () => {
 
     useEffect(()=>{
         
-        try{
+        const getList = async () =>{
             
-            loading ? setloadingLoad(loading) : setloadingLoad(loading)
+            try{
+                
+                loading ? setloadingLoad(loading) : setloadingLoad(loading)
 
-            error ? seterrorMsg(error) : seterrorMsg(null) // check for error message
-            
-            setcompletedList(value.docs.filter(doc => doc.data().completed)) //filter to completed list
-            setpendingList(value.docs.filter(doc => !doc.data().completed)) //filter to pending list 
-            
-        }catch(e){
-            console.log(e.message)
+                error ? seterrorMsg(error) : seterrorMsg(null) // check for error message
+                
+                setcompletedList(value.docs.filter(doc => doc.data().completed)) //filter to completed list
+                setpendingList(value.docs.filter(doc => !doc.data().completed)) //filter to pending list 
+                
+            }catch(e){
+                console.log(e.message)
+            }
         }
+
+        getList()
 
     }, [value, error, loading])
     
 
+    const updateTaskDetails = async () =>{
+        // Updates every task field
+        try{
+            setLoader(<Spinner animation="border" size="sm" className='mr-3' variant="light" />) 
+            await updateDoc(doc(db, "users", user.uid, "tasklist", taskId), {
+                title: title,
+                description: description,
+                time: time,
+                date: date
+            })
+            
+            settoastDisplay(<Toaster title={title} status={'Task Updated'} active={true} />)
+            setActive(false)
+            setLoader('')
+        }catch(e){
+            console.log(e.message)
+        }
+    }
     
     // get task input
     const addTask = async () => {
@@ -95,17 +122,32 @@ const Dashboard = () => {
             }
             setLoader(<Spinner animation="border" size="sm" className='mr-3' variant="light" />) 
 
-            const docRef = await addDoc(collection(db, "users", user.uid, "tasklist"), data)
+            await addDoc(collection(db, "users", user.uid, "tasklist"), data)
            
-            console.log(docRef.id)
+            settoastDisplay(<Toaster title={title} status={'New Task Added'} active={true} />)
             setActive(false)    
             setLoader('')
             setShow(true)
-            console.log('Task added');
         }catch(e) {
             console.log(e.message)
         }
         
+    }
+
+
+    // passes a function to the card child component and does the following:
+    // gets the id of the task
+    // show the modal
+    // set the task details
+    
+    const showUpdateModal = (id, status, data) =>{
+        setActive(status) 
+        settaskId(id) //sets the id of task to be updated
+        setTitle(data.title)
+        setDescription(data.description)
+        setTime(data.time)
+        setDate(data.date)
+        setbuttonText('Update Task')
     }
 
     
@@ -140,7 +182,7 @@ const Dashboard = () => {
                 </span>
                 
             </div>
-            <input type="text" className="form-control" onChange={(e) => setTitle(e.target.value)}  placeholder="“Walk the dog”"  />
+            <input type="text" className="form-control" onChange={(e) => setTitle(e.target.value)}  placeholder="“Walk the dog”" value={title}  />
         </div>
 
         <div className="input-group mb-4">
@@ -150,50 +192,28 @@ const Dashboard = () => {
                 </span>
                 
             </div>
-            <input type="text" className="form-control"  onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
+            <input type="text" className="form-control"  onChange={(e) => setDescription(e.target.value)} placeholder="Description" value={description} />
         </div>
 
         <div className="d-flex mb-5" style={{justifyContent : 'space-between'}}>
             <div className="input-group mb-3 mr-2 w-40">
                 
-                <input type="time" className='form-control' onChange={(e) => setTime(e.target.value)} name="" id="" />
+                <input type="time" className='form-control' onChange={(e) => setTime(e.target.value)} value={time} id="" />
             </div>
 
             <div className="input-group w-40 mb-3">
                 
-                <input type="date" className='form-control ml-2' onChange={(e) => setDate(e.target.value)} name="" id="" />
+                <input type="date" className='form-control ml-2' onChange={(e) => setDate(e.target.value)} value={date} id="" />
             </div>
         </div>
         <div className="d-flex justify-content-center">
-                <button className="btn btn-primary w-100" onClick={addTask} >
+                <button className="btn btn-primary w-100" onClick={taskId !== '' ? updateTaskDetails : addTask} >
                 {loader}
-                    Add Task
+                    {buttonText}
                 </button>
             </div>
         </Modal.Body>
       </Modal>
-        )
-    }
-
-    const showToast = ( title ) => {
-        return(
-            <Toast onClose={() => setShow(false)} show={show} 
-                delay={3000} animation={true}
-                // autohide
-            >
-          <Toast.Header>
-            
-            <FontAwesomeIcon icon={faCircle} className='mr-2' style={{color : '#008148'}} />
-            <strong className="mr-auto">New Task Added</strong>
-            <small>11 mins ago</small>
-          </Toast.Header>
-          <Toast.Body style={{paddingBottom : 0}}>{title}
-              <br />
-              <button className="btn btn-default w-100" style={{padding : 6, fontSize : 14, marginTop : 12, color : '#0197F6'}} >
-                <FontAwesomeIcon icon={faClose} className='mr-1' onClick={() => setShow(false)} /> Close</button>
-          </Toast.Body>
-           
-        </Toast>
         )
     }
 
@@ -212,7 +232,7 @@ const Dashboard = () => {
                     // checks for empty list
                     pendingList ?
                     pendingList.map(doc => {
-                        return <Card key={doc.id} docId={doc.id} datas={doc.data()} />
+                        return <Card key={doc.id} docId={doc.id} datas={doc.data()} openModal={showUpdateModal} />
                     }) :
                     (
                         // Empty Pending Screen 
@@ -270,7 +290,8 @@ const Dashboard = () => {
     <div className=''>
         {showModal()}
         <div className="">
-            {showToast(title)}
+            {/* {showToast(title, status)} */}
+            {toastDisplay}
         </div>
         
         {/* <AddTaskModal active={active} /> */}
@@ -306,7 +327,16 @@ const Dashboard = () => {
         <div className="fixed-bottom">
             <div className="d-flex mb-5 justify-content-center">
                 <button className="btn rounded-btn shadow-lg"
-                onClick={() => setActive(true)} >
+                onClick={() => {
+                    // initializes every field to empty
+                    setTitle('');
+                    setDescription('');
+                    setTime('');
+                    setDate('');
+                    settaskId('');
+                    setActive(true)
+                }
+                } >
                     <FontAwesomeIcon icon={faAdd} />
                 </button>
                 

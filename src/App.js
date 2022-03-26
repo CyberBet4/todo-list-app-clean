@@ -3,7 +3,7 @@ import './assets/css/style.css'
 import Login from './pages/auth/Login'
 import Dashboard from './pages/Dashboard'
 import { Spinner } from 'react-bootstrap'
-
+import 'animate.css';
 import { getAuth } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 // import { GoogleAuthProvider } from 'firebase/compat/app'
