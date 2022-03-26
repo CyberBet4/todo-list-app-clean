@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import avatar1 from '../assets/img/avatar1.png'
+import defaultAvatar from '../assets/img/avatar-default.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faClose } from '@fortawesome/free-solid-svg-icons'
 import Close from '../assets/svgs/x.svg'
@@ -27,9 +27,7 @@ export const auth = getAuth()
 
 const Dashboard = () => {
 
-    const [ show, setShow ] = useState(false) //...
     const [ screen, setScreen ] = useState(0)
-    const [ status, setStatus ] = useState('')
     const [ active, setActive ] = useState(false)
     const [ title, setTitle ] = useState('')
     const [ description, setDescription ] = useState('')
@@ -127,7 +125,7 @@ const Dashboard = () => {
             settoastDisplay(<Toaster title={title} status={'New Task Added'} active={true} />)
             setActive(false)    
             setLoader('')
-            setShow(true)
+            
         }catch(e) {
             console.log(e.message)
         }
@@ -290,7 +288,6 @@ const Dashboard = () => {
     <div className=''>
         {showModal()}
         <div className="">
-            {/* {showToast(title, status)} */}
             {toastDisplay}
         </div>
         
@@ -306,7 +303,7 @@ const Dashboard = () => {
                 </div>
                     {/* image goes here */}
                     <button className="btn btn-default" onClick={signoutUser} >Sign Out</button>  
-                    <img src={user.photoURL} className='img-fluid avatar' alt="" />
+                    <img src={user.photoURL ? user.photoURL : defaultAvatar} className='img-fluid avatar' alt="" />
             </div>
 
             <div className='d-flex p-0 justify-content-start'>

@@ -5,6 +5,7 @@
 
 - Login with your Google account
 - Add Task with time and date
+- Edit Task details
 
 
 ### `Open it Live on the link below`
