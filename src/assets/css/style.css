@@ -234,4 +234,9 @@ input[type=time].form-control {
   padding: 0px;
 }
 
+.strikethrough {
+  text-decoration: line-through !important;
+  color: #8A8B8C;
+}
+
 /*# sourceMappingURL=style.css.map */

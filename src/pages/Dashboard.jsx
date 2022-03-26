@@ -243,7 +243,9 @@ const Dashboard = () => {
                 </div>
             )
         }else if(screen === 1){
+            
             return(
+
                 <div className="main-content p-3">
                     
                     {/* checks error message */}
@@ -252,18 +254,32 @@ const Dashboard = () => {
                     // checks loading state
                     loadingLoad ? <div><Skeleton height={140} count={2} /> </div> : 
 
-                    // checks for empty list
-                    completedList ?
-                    completedList.map(doc => {
-                        return <Card key={doc.id} docId={doc.id} datas={doc.data()} />
-                    }) :
-                    (
+                    // checks for empty list with completed list length
+                    completedList.length === 0 ? 
                         // Empty Completed Screen 
-                        <div className="d-flex mt-5 justify-content-center">
+                        <div className="d-flex mt-5">
                             <img src={emtpyTasklist} alt="" className="img-fluid" />
                             <h6 style={{color : '#808080', textAlign : 'center'}}>Your task willl appear here when they are ticked complete</h6>
                         </div>
-                    )
+                     :
+                    completedList.map(doc => {
+                        return <Card key={doc.id} docId={doc.id} datas={doc.data()} />
+                    }) 
+                    
+                    
+
+                    // !completedList ?
+                    // completedList.map(doc => {
+                    //     return <Card key={doc.id} docId={doc.id} datas={doc.data()} />
+                    // }) 
+                    // :
+                    // (
+                    //     // Empty Completed Screen 
+                    //     <div className="d-flex mt-5">
+                    //         <img src={emtpyTasklist} alt="" className="img-fluid" />
+                    //         <h6 style={{color : '#808080', textAlign : 'center'}}>Your task willl appear here when they are ticked complete</h6>
+                    //     </div>
+                    // )
                     }
                                                 
                 </div>

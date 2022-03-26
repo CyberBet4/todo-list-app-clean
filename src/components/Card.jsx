@@ -13,6 +13,7 @@ const Card = ({ datas, docId, openModal }) => {
     const [user] = useAuthState(auth)
     const [ toastDisplay, settoastDisplay ] = useState('')
 
+    console.log(datas.completed)
     
 
     const editTask = (status = false) => {
@@ -50,10 +51,17 @@ const Card = ({ datas, docId, openModal }) => {
         <div className='task-card p-4 mb-4 animate__animated animate__fadeIn'>
             <div className="d-flex" style={{justifyContent : 'space-between', alignItems : 'center'}}>
                 <div style={{width : '70%'}}>
-                    <h5 className='task-title'>{datas.title}</h5>
-                    <p className="task-desc">
-                        {datas.description}
-                    </p>
+                    {
+                        datas.completed ?
+                        <h5 className='task-title strikethrough'>{datas.title}</h5>
+                        : <h5 className='task-title'>{datas.title}</h5>
+                    }
+                    
+                    {
+                        datas.completed ?
+                        <p className='task-desc strikethrough'>{datas.description}</p>
+                        : <p className='task-desc'>{datas.description}</p>
+                    }
                     
                     <div>
                         {toastDisplay}
@@ -72,24 +80,38 @@ const Card = ({ datas, docId, openModal }) => {
 
                 <div>
                     <div className='d-flex justify-content-end'>
-                        <button onClick={() => editTask(true)} className="btn btn-default" 
-                        style={{color : '#0197F6',
-                                padding : 0,
-                                fontSize : 14,
-                                borderRadius : 0
-                            }}>
-                                <img src={editIcon} className='img-fluid mr-2' alt="" />
-                            Edit
-                        </button>
+                        {
+                            !datas.completed ? 
+                            (
+                                <button onClick={() => editTask(true)} className="btn btn-default" 
+                                style={{color : '#0197F6',
+                                    padding : 0,
+                                    fontSize : 14,
+                                    borderRadius : 0
+                                }}>
+                                    <img src={editIcon} className='img-fluid mr-2' alt="" />
+                                Edit
+                            </button>
+                            ) : ('')
+
+                        }
+                        
                     </div>
 
                     <div className="d-flex justify-content-center mt-5">
                         <button className='btn btn-opt  mr-3'>
                             <FontAwesomeIcon className='info-color' onClick={deleteTask} style={{fontSize : 12, color : '#0197F6'}} icon={faClose} />
                         </button>
-                        <button className='btn btn-opt '>
+                        {
+                            !datas.completed ?
+                            (<button className='btn btn-opt '>
                             <FontAwesomeIcon className='info-color' onClick={updateTask} style={{fontSize : 12, color : '#0197F6'}} icon={faCheck} />
-                    </button>
+                            </button>
+                            ) :
+                            ''
+
+                        }
+                        
                     </div>
                     
                     
